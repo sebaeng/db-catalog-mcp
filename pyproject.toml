@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "db-catalog-mcp"
+version = "1.0.0"
+description = "MCP server for retrieving SQL DDL of database artifacts from PostgreSQL / EDB Advanced Server"
+requires-python = ">=3.9"
+dependencies = [
+    "mcp",
+    "psycopg2-binary",
+    "python-dotenv",
+]
+
+[project.scripts]
+db-catalog-mcp = "db_catalog_mcp.server:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["db_catalog_mcp*"]

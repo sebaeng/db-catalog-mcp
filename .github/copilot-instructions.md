@@ -17,24 +17,24 @@ all definitions are returned separated by `---`.
 
 ## How to build and run
 
-Build the container image (PowerShell):
+Install dependencies (one-time, from the project root):
 ```
-podman build -t db-catalog-mcp .
+pip install --user -e .
 ```
 
 The server is registered in `.vscode/mcp.json` and starts automatically when GitHub Copilot
 needs it. Database credentials are read from `.env` (copy from `.env.example`).
 
-For local development without Docker (WSL Debian terminal):
+For local development:
 ```
-npm run dev
+python db_catalog_mcp/server.py
 ```
 
 ## Project layout
 
 | Path | Description |
 |------|-------------|
-| `src/index.ts` | MCP server — pool, queries, tool registration, transport switching |
-| `Dockerfile` | Multi-stage build: tsc → node:22-alpine runtime |
-| `.vscode/mcp.json` | Registers the server with GitHub Copilot via Podman |
-| `.env.example` | Template for DB credentials and transport settings |
+| `db_catalog_mcp/server.py` | MCP server — pool, queries, tool registration |
+| `pyproject.toml` | Package definition and pip entry point (`db-catalog-mcp`) |
+| `.vscode/mcp.json` | Registers the server with GitHub Copilot |
+| `.env.example` | Template for DB credentials |

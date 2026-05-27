@@ -3,16 +3,16 @@
 MCP server that exposes the SQL DDL source code of database artifacts
 (functions, views, stored procedures) from a PostgreSQL / EDB Advanced Server database.
 
-Runs as a Podman container and integrates with GitHub Copilot Agent mode in VS Code.
+Implemented in Python. Runs standalone.
 
 ---
 
 ## Prerequisites
 
-| Tool | Where |
+| Tool | Notes |
 |------|-------|
-| [Podman Desktop](https://podman-desktop.io/) | Windows |
-| Node.js 18+ and npm | WSL (for local dev only) |
+| Python 3.9+ | [python.org](https://www.python.org/downloads/) |
+| pip | Included with Python |
 
 ---
 
@@ -29,23 +29,25 @@ Copy-Item .env.example .env
 Edit `.env`:
 
 ```dotenv
-DB_HOST=host.containers.internal   # use this when the DB runs on the Windows host
+DB_HOST=your_host
 DB_PORT=5432
 DB_NAME=your_database
 DB_USER=your_user
 DB_PASSWORD=your_password
-MCP_TRANSPORT=stdio
 ```
 
 > `.env` is git-ignored and never committed.
 
-### 2. Build the container image
+### 2. Install dependencies
 
-Run from a PowerShell terminal in the project root:
+Run once from the project root:
 
 ```powershell
-podman build -t db-catalog-mcp .
+pip install --user -e .
 ```
+
+> `--user` installs to your user directory — no administrator rights required.
+> This also registers the `db-catalog-mcp` command globally in your PATH.
 
 ### 3. Register the MCP server in VS Code
 
@@ -57,25 +59,40 @@ in the list of available tools (hammer icon).
 
 ---
 
+## Using the server in other workspaces
+
+After running `pip install --user -e .` once, copy `.vscode/mcp.json` to any other
+workspace. The `db-catalog-mcp` command is available globally — no path adjustments needed.
+
+---
+
 ## Updating the server
 
-After modifying `src/index.ts`:
+After modifying `db_catalog_mcp/server.py`, no rebuild is needed (editable install).
 
-**1. Rebuild the TypeScript (WSL terminal):**
-
-```bash
-npm run build
-```
-
-**2. Rebuild the container image (PowerShell):**
-
-```powershell
-podman build -t db-catalog-mcp .
-```
-
-**3. Restart the MCP server in VS Code:**
+Restart the MCP server in VS Code:
 
 `Ctrl+Shift+P` → **MCP: List Servers** → `db-catalog` → Restart Server
+
+---
+
+## Development / manual run
+
+```powershell
+python db_catalog_mcp/server.py
+```
+
+The server blocks waiting on stdin — this is expected for stdio MCP servers. Press `Ctrl+C` to stop.
+
+---
+
+## Uninstall
+
+```powershell
+pip uninstall db-catalog-mcp
+```
+
+Then remove (or empty) `.vscode/mcp.json` from any workspace where it was configured.
 
 ---
 

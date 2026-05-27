@@ -2,15 +2,7 @@
   "servers": {
     "db-catalog": {
       "type": "stdio",
-      "command": "podman",
-      "args": [
-        "run",
-        "--rm",
-        "-i",
-        "--env-file",
-        "${workspaceFolder}/.env",
-        "db-catalog-mcp"
-      ]
+      "command": "db-catalog-mcp"
     }
   }
 }
